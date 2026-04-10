@@ -9,6 +9,7 @@ import com.ae.devlens.plugins.logs.store.LogStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 /**
  * AEDevLens — Extensible on-device dev tools for Kotlin Multiplatform.
@@ -36,8 +37,7 @@ import kotlinx.coroutines.flow.asStateFlow
  */
 class AEDevLens private constructor(val config: AEDevLensConfig) {
 
-    @PublishedApi
-    internal val _plugins = MutableStateFlow<List<DevLensPlugin>>(emptyList())
+    private val _plugins = MutableStateFlow<List<DevLensPlugin>>(emptyList())
 
     /** All registered plugins */
     val plugins: StateFlow<List<DevLensPlugin>> = _plugins.asStateFlow()
@@ -67,22 +67,37 @@ class AEDevLens private constructor(val config: AEDevLensConfig) {
     }
 
     private fun installInternal(plugin: DevLensPlugin) {
-        val current = _plugins.value
-        if (current.any { it.id == plugin.id }) {
-            return // Already installed
+        var attached = false
+        _plugins.update { current ->
+            if (current.any { it.id == plugin.id }) {
+                current
+            } else {
+                attached = true
+                current + plugin
+            }
         }
-        _plugins.value = current + plugin
-        safeCall(plugin.id) { plugin.onAttach(this) }
+        if (attached) {
+            safeCall(plugin.id) { plugin.onAttach(this) }
+        }
     }
 
     /**
      * Unregister a plugin by its ID.
      */
     fun uninstall(pluginId: String) {
-        val current = _plugins.value
-        val plugin = current.find { it.id == pluginId } ?: return
-        safeCall(pluginId) { plugin.onDetach() }
-        _plugins.value = current.filter { it.id != pluginId }
+        var detachedPlugin: DevLensPlugin? = null
+        _plugins.update { current ->
+            val plugin = current.find { it.id == pluginId }
+            if (plugin == null) {
+                current
+            } else {
+                detachedPlugin = plugin
+                current.filter { it.id != pluginId }
+            }
+        }
+        detachedPlugin?.let { plugin ->
+            safeCall(pluginId) { plugin.onDetach() }
+        }
     }
 
     /**
@@ -93,7 +108,7 @@ class AEDevLens private constructor(val config: AEDevLensConfig) {
      * ```
      */
     inline fun <reified T : DevLensPlugin> getPlugin(): T? {
-        return _plugins.value.filterIsInstance<T>().firstOrNull()
+        return plugins.value.filterIsInstance<T>().firstOrNull()
     }
 
     /**
@@ -157,7 +172,7 @@ class AEDevLens private constructor(val config: AEDevLensConfig) {
         internal fun safeCall(pluginId: String, block: () -> Unit) {
             runCatching { block() }
                 .onFailure { e ->
-                    println("AEDevLens: Plugin '$pluginId' error: ${e.message}")
+                    // Optionally log via an error handler or ignore if none exists.
                 }
         }
     }

@@ -1,7 +1,7 @@
 package com.ae.devlens
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
@@ -76,11 +76,11 @@ fun AEDevLensProvider(
 
     CompositionLocalProvider(LocalAEDevLensController provides controller) {
         AEDevLensTheme(colorScheme = config.colorScheme) {
-            Box(
+            BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxSize()
                     .then(
-                        if (config.longPressToOpenMs > 0) {
+                        if (config.enableLongPress) {
                             Modifier.pointerInput(Unit) {
                                 detectTapGestures(
                                     onLongPress = { controller.show() }
@@ -108,9 +108,10 @@ fun AEDevLensProvider(
 
                 // Inspector UI overlay
                 if (isVisible) {
+                    val isLargeScreen = maxWidth > 600.dp
                     AEDevLensContainer(
                         plugins = uiPlugins,
-                        isLargeScreen = false, // Default to phone layout
+                        isLargeScreen = isLargeScreen,
                         onDismiss = { controller.hide() }
                     )
                 }

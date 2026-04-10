@@ -25,19 +25,10 @@ data class AEDevLensConfig(
     val floatingButtonAlignment: Alignment = Alignment.BottomEnd,
 
     /**
-     * Long-press duration in milliseconds to open inspector.
-     * Set to 0 to disable. Default: 3000ms (3 seconds).
+     * Enable long-press gesture to open inspector.
+     * Uses Compose's default long-press duration.
      */
-    val longPressToOpenMs: Long = 3000L,
-
-    /**
-     * Number of fingers required for the long-press gesture.
-     * Default: 3 fingers.
-     */
-    val longPressFingerCount: Int = 3,
-
-    /** Log storage strategy */
-    val storageStrategy: StorageStrategy = StorageStrategy.InMemory(),
+    val enableLongPress: Boolean = true,
 
     /**
      * Custom Material3 [ColorScheme] for the DevLens UI.

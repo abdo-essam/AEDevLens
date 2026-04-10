@@ -35,7 +35,7 @@ internal fun LogsContent(
     val logs by logStore.logsFlow.collectAsState()
     val searchQuery by logStore.searchQuery.collectAsState()
     val selectedFilter by logStore.selectedFilter.collectAsState()
-    var expandedLogIndex by remember { mutableStateOf<Int?>(null) }
+    var expandedLogId by remember { mutableStateOf<String?>(null) }
 
     val clipboardManager = LocalClipboardManager.current
     val listState = rememberLazyListState()
@@ -63,7 +63,6 @@ internal fun LogsContent(
             totalCount = logs.size,
             onClearAll = {
                 logStore.clear()
-                onCloseInspector()
             },
             onCopyAll = {
                 val allLogs = LogUtils.formatAllLogsForCopy(filteredLogs)
@@ -95,9 +94,9 @@ internal fun LogsContent(
             LogsList(
                 logs = filteredLogs,
                 listState = listState,
-                expandedLogIndex = expandedLogIndex,
-                onToggleExpand = { index ->
-                    expandedLogIndex = if (expandedLogIndex == index) null else index
+                expandedLogId = expandedLogId,
+                onToggleExpand = { id ->
+                    expandedLogId = if (expandedLogId == id) null else id
                 },
                 onCopyLog = { log ->
                     val copyText = LogUtils.formatLogForCopy(log)
@@ -112,8 +111,8 @@ internal fun LogsContent(
 private fun LogsList(
     logs: List<LogEntry>,
     listState: LazyListState,
-    expandedLogIndex: Int?,
-    onToggleExpand: (Int) -> Unit,
+    expandedLogId: String?,
+    onToggleExpand: (String) -> Unit,
     onCopyLog: (LogEntry) -> Unit
 ) {
     Card(
@@ -130,12 +129,12 @@ private fun LogsList(
         ) {
             itemsIndexed(
                 items = logs,
-                key = { index, log -> "${log.timestamp}_$index" }
+                key = { _, log -> log.id }
             ) { index, log ->
                 LogEntryItem(
                     log = log,
-                    isExpanded = expandedLogIndex == index,
-                    onToggleExpand = { onToggleExpand(index) },
+                    isExpanded = expandedLogId == log.id,
+                    onToggleExpand = { onToggleExpand(log.id) },
                     onCopy = { onCopyLog(log) }
                 )
 

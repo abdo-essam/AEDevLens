@@ -12,6 +12,8 @@ import com.ae.devlens.plugins.logs.ui.LogsContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -38,7 +40,7 @@ class LogsPlugin(
     private val _badgeCount = MutableStateFlow<Int?>(null)
     override val badgeCount: StateFlow<Int?> = _badgeCount
 
-    private val scope = CoroutineScope(Dispatchers.Default)
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private var badgeJob: Job? = null
     private var onCloseCallback: (() -> Unit)? = null
 
@@ -65,6 +67,8 @@ class LogsPlugin(
     override fun onDetach() {
         badgeJob?.cancel()
         badgeJob = null
+        scope.cancel()
+        logStore.destroy()
     }
 
     internal fun setOnCloseCallback(callback: () -> Unit) {

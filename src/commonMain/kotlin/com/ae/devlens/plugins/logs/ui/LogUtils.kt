@@ -1,5 +1,7 @@
 package com.ae.devlens.plugins.logs.ui
 
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.ae.devlens.plugins.logs.model.LogEntry
 import kotlinx.datetime.TimeZone
@@ -60,22 +62,25 @@ internal object LogUtils {
         else -> Color(0xFF9C27B0)
     }
 
+    @Composable
     fun getLogTypeColor(log: LogEntry): Pair<Color, Color> {
+        val colors = androidx.compose.material3.MaterialTheme.colorScheme
+        val isDark = isSystemInDarkTheme()
         val mainColor = when {
-            log.isAnalytics -> Color(0xFFFF6D00)
-            log.isError -> Color(0xFFE53935)
-            log.isResponse -> Color(0xFF4CAF50)
-            log.isRequest -> Color(0xFF2196F3)
-            log.isNetworkLog -> Color(0xFF9C27B0)
-            else -> Color(0xFF9E9E9E)
+            log.isAnalytics -> if (isDark) Color(0xFFFFB74D) else Color(0xFFFF6D00)
+            log.isError -> colors.error
+            log.isResponse -> if (isDark) Color(0xFF81C784) else Color(0xFF4CAF50)
+            log.isRequest -> if (isDark) Color(0xFF64B5F6) else Color(0xFF2196F3)
+            log.isNetworkLog -> if (isDark) Color(0xFFBA68C8) else Color(0xFF9C27B0)
+            else -> colors.onSurfaceVariant
         }
         val bgColor = when {
-            log.isAnalytics -> Color(0xFFFFF3E0)
-            log.isError -> Color(0xFFFFEBEE)
-            log.isResponse -> Color(0xFFE8F5E9)
-            log.isRequest -> Color(0xFFE3F2FD)
-            log.isNetworkLog -> Color(0xFFF3E5F5)
-            else -> Color(0xFFFAFAFA)
+            log.isAnalytics -> if (isDark) Color(0xFF4E342E) else Color(0xFFFFF3E0)
+            log.isError -> colors.errorContainer
+            log.isResponse -> if (isDark) Color(0xFF1B5E20) else Color(0xFFE8F5E9)
+            log.isRequest -> if (isDark) Color(0xFF0D47A1) else Color(0xFFE3F2FD)
+            log.isNetworkLog -> if (isDark) Color(0xFF4A148C) else Color(0xFFF3E5F5)
+            else -> colors.surfaceVariant
         }
         return mainColor to bgColor
     }

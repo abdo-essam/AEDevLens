@@ -11,6 +11,7 @@ import kotlin.time.Clock
  * and log type classification.
  */
 data class LogEntry(
+    val id: String = "log_${Clock.System.now().toEpochMilliseconds()}_${kotlin.random.Random.nextInt(10000)}",
     val level: LogLevel,
     val tag: String,
     val message: String,
@@ -150,7 +151,7 @@ data class LogEntry(
         private val HTTP_METHODS = listOf("GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS")
 
         private val STATUS_CODE_PATTERN by lazy {
-            Regex("\\b([1-5][0-9]{2})\\b")
+            Regex("(?:HTTP/\\d\\.\\d\\s+|status[:\\s]+)(\\d{3})")
         }
 
         private val URL_PATTERN by lazy {
