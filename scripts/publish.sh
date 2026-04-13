@@ -41,14 +41,10 @@ echo "🧪 Running tests..."
 echo "🔍 Checking API compatibility..."
 ./gradlew apiCheck
 
-# 7. Commit (only if version changed) and tag
+# 7. Commit and tag
 echo "📦 Creating release commit and tag..."
 git add gradle.properties
-if git diff --cached --quiet; then
-    echo "   (no version change to commit — VERSION_NAME already $VERSION)"
-else
-    git commit -m "release: v$VERSION"
-fi
+git commit -m "release: v$VERSION"
 git tag -a "v$VERSION" -m "Release v$VERSION"
 
 # 8. Push
