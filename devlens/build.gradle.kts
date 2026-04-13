@@ -17,6 +17,7 @@ group = "io.github.abdo-essam"
 version = project.findProperty("VERSION_NAME")?.toString() ?: "0.0.1-SNAPSHOT"
 
 kotlin {
+    jvmToolchain(17)
     explicitApiWarning()
 
     androidLibrary {
@@ -180,4 +181,9 @@ signing {
 
 tasks.withType<Sign>().configureEach {
     onlyIf { !version.toString().endsWith("SNAPSHOT") }
+}
+
+
+tasks.withType<JavaCompile>().configureEach {
+    classpath = files()
 }

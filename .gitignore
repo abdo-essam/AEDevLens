@@ -38,3 +38,4 @@ Thumbs.db
 *.log
 secret_key.txt
 secret.properties
+/.vscode/settings.json
