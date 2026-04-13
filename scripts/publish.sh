@@ -44,7 +44,20 @@ echo "🔍 Checking API compatibility..."
 # 7. Commit and tag
 echo "📦 Creating release commit and tag..."
 git add gradle.properties
-git commit -m "release: v$VERSION"
+
+# Only commit if there are staged changes
+if git diff --cached --quiet; then
+    echo "ℹ️  No version change to commit (already at v$VERSION)"
+else
+    git commit -m "release: v$VERSION"
+fi
+
+# Create the tag (fail if it already exists)
+if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+    echo "❌ Tag v$VERSION already exists!"
+    exit 1
+fi
+
 git tag -a "v$VERSION" -m "Release v$VERSION"
 
 # 8. Push
