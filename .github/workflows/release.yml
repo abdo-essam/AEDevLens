@@ -10,9 +10,8 @@ permissions:
 
 jobs:
   release:
-
     name: 🚀 Publish to Maven Central
-    runs-on: macos-14  # Need macOS for iOS targets
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
 
@@ -40,13 +39,13 @@ jobs:
         run: ./gradlew allTests
 
       - name: Publish to Maven Central
-        run: ./gradlew :devlens:publishAllPublicationsToSonatypeRepository
+        run: ./gradlew :devlens:publishAndReleaseToMavenCentral --no-configuration-cache
         env:
-          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
 
       - name: Generate Changelog
         id: changelog

@@ -1,6 +1,6 @@
+import com.vanniktech.maven.publish.SonatypeHost
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import java.util.Base64
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.dokka)
+    alias(libs.plugins.vanniktechPublish)
     alias(libs.plugins.kover)
     `maven-publish`
     signing
@@ -108,85 +109,46 @@ kover {
     }
 }
 
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-    from(tasks.named("dokkaGeneratePublicationHtml"))
-}
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
 
-publishing {
-    publications.withType<MavenPublication> {
-        artifact(javadocJar)
+    pom {
+        name.set("AEDevLens")
+        description.set(
+            "Extensible on-device dev tools SDK for Kotlin Multiplatform — " +
+                "inspect logs, network, and more with a beautiful Compose UI.",
+        )
+        url.set("https://github.com/abdo-essam/AEDevLens")
+        inceptionYear.set("2025")
 
-        pom {
-            name.set("AEDevLens")
-            description.set(
-                "Extensible on-device dev tools SDK for Kotlin Multiplatform — " +
-                    "inspect logs, network, and more with a beautiful Compose UI.",
-            )
+        licenses {
+            license {
+                name.set("Apache License 2.0")
+                url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
+                distribution.set("repo")
+            }
+        }
+
+        developers {
+            developer {
+                id.set("abdo-essam")
+                name.set("Abdo Essam")
+                url.set("https://github.com/abdo-essam")
+            }
+        }
+
+        scm {
             url.set("https://github.com/abdo-essam/AEDevLens")
-            inceptionYear.set("2025")
+            connection.set("scm:git:git://github.com/abdo-essam/AEDevLens.git")
+            developerConnection.set("scm:git:ssh://github.com/abdo-essam/AEDevLens.git")
+        }
 
-            licenses {
-                license {
-                    name.set("Apache License 2.0")
-                    url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
-                    distribution.set("repo")
-                }
-            }
-
-            developers {
-                developer {
-                    id.set("abdo-essam")
-                    name.set("Abdo Essam")
-                    url.set("https://github.com/abdo-essam")
-                }
-            }
-
-            scm {
-                url.set("https://github.com/abdo-essam/AEDevLens")
-                connection.set("scm:git:git://github.com/abdo-essam/AEDevLens.git")
-                developerConnection.set("scm:git:ssh://github.com/abdo-essam/AEDevLens.git")
-            }
-
-            issueManagement {
-                system.set("GitHub Issues")
-                url.set("https://github.com/abdo-essam/AEDevLens/issues")
-            }
+        issueManagement {
+            system.set("GitHub Issues")
+            url.set("https://github.com/abdo-essam/AEDevLens/issues")
         }
     }
-
-    repositories {
-        maven {
-            name = "sonatype"
-            url = uri("https://central.sonatype.com/api/v1/publisher/deployments/download/")
-
-            credentials {
-                username = System.getenv("MAVEN_CENTRAL_USERNAME") ?: ""
-                password = System.getenv("MAVEN_CENTRAL_PASSWORD") ?: ""
-            }
-        }
-    }
-}
-
-signing {
-    val signingKeyId = System.getenv("SIGNING_KEY_ID")
-    val rawKey = System.getenv("SIGNING_KEY")
-    val signingPassword = System.getenv("SIGNING_PASSWORD")
-
-    if (!rawKey.isNullOrBlank()) {
-        val signingKey =
-            try {
-                String(Base64.getDecoder().decode(rawKey.trim()))
-            } catch (_: IllegalArgumentException) {
-                rawKey
-            }
-        useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-        sign(publishing.publications)
-    }
-}
-
-tasks.withType<Sign>().configureEach {
-    onlyIf { !version.toString().endsWith("SNAPSHOT") }
 }
 
 tasks.withType<JavaCompile>().configureEach {
