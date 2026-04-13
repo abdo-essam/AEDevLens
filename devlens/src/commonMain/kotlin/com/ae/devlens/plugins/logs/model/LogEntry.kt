@@ -27,24 +27,26 @@ data class LogEntry(
 
     val isRequest: Boolean
         get() =
-            !isResponse && (
-                message.contains("-->") ||
-                    message.contains("REQUEST", ignoreCase = true) ||
-                    httpMethod != null
-            )
+            !isResponse &&
+                (
+                    message.contains("-->") ||
+                        message.contains("REQUEST", ignoreCase = true) ||
+                        httpMethod != null
+                )
 
     val isNetworkLog: Boolean
         get() =
-            !isAnalytics && (
-                tag.contains("HTTP", ignoreCase = true) ||
-                    tag.contains("Network", ignoreCase = true) ||
-                    tag.contains("API", ignoreCase = true) ||
-                    tag.contains("ktor", ignoreCase = true) ||
-                    isRequest ||
-                    isResponse ||
-                    url != null ||
-                    httpMethod != null
-            )
+            !isAnalytics &&
+                (
+                    tag.contains("HTTP", ignoreCase = true) ||
+                        tag.contains("Network", ignoreCase = true) ||
+                        tag.contains("API", ignoreCase = true) ||
+                        tag.contains("ktor", ignoreCase = true) ||
+                        isRequest ||
+                        isResponse ||
+                        url != null ||
+                        httpMethod != null
+                )
 
     val isError: Boolean
         get() = level == LogLevel.ERROR || level == LogLevel.ASSERT
