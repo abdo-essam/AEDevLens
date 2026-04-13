@@ -23,7 +23,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":")) // Links to AEDevLens Library
+            implementation(project(":devlens")) // Links to AEDevLens Library
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)

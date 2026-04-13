@@ -1,283 +1,290 @@
-# AEDevLens
+<p align="center">
+  <img src="docs/assets/banner.png" width="600" alt="AEDevLens Banner" />
+</p>
 
-> 🔍 Extensible on-device developer tools SDK for Kotlin Multiplatform — a mini Flipper built for KMP teams.
+<h1 align="center">AEDevLens</h1>
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.3.0-blue.svg)](https://kotlinlang.org)
-[![Compose Multiplatform](https://img.shields.io/badge/Compose_Multiplatform-1.9.3-green.svg)](https://www.jetbrains.com/lpc/compose-multiplatform/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+<p align="center">
+  <strong>Extensible on-device dev tools for Kotlin Multiplatform</strong>
+  <br />
+  A mini Flipper for KMP — inspect logs, network, and more with a beautiful Compose UI.
+</p>
+
+<p align="center">
+  <a href="https://central.sonatype.com/artifact/io.github.abdo-essam/devlens">
+    <img src="https://img.shields.io/maven-central/v/io.github.abdo-essam/devlens?style=flat-square&color=6C5CE7" alt="Maven Central" />
+  </a>
+  <a href="https://github.com/abdo-essam/AEDevLens/actions/workflows/ci.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/abdo-essam/AEDevLens/ci.yml?branch=main&style=flat-square" alt="CI" />
+  </a>
+  <a href="https://codecov.io/gh/abdo-essam/AEDevLens">
+    <img src="https://img.shields.io/codecov/c/github/abdo-essam/AEDevLens?style=flat-square&color=00B894" alt="Code Coverage" />
+  </a>
+  <a href="https://kotlin.github.io/binary-compatibility-validator/">
+    <img src="https://img.shields.io/badge/API-stable-blue?style=flat-square" alt="API Stability" />
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/github/license/abdo-essam/AEDevLens?style=flat-square" alt="License" />
+  </a>
+  <a href="https://kotlinlang.org">
+    <img src="https://img.shields.io/badge/Kotlin-2.3.0-7F52FF?style=flat-square&logo=kotlin" alt="Kotlin" />
+  </a>
+</p>
+
+<p align="center">
+  <a href="#-features">Features</a> •
+  <a href="#-installation">Installation</a> •
+  <a href="#-quick-start">Quick Start</a> •
+  <a href="#-plugins">Plugins</a> •
+  <a href="#-custom-plugins">Custom Plugins</a> •
+  <a href="https://abdo-essam.github.io/AEDevLens/">Documentation</a>
+</p>
 
 ---
 
-## Why "AEDevLens"?
+<p align="center">
+  <img src="docs/assets/demo-light.gif" width="280" alt="Light Mode Demo" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="docs/assets/demo-dark.gif" width="280" alt="Dark Mode Demo" />
+</p>
 
-The name carries a specific meaning:
+## ✨ Features
 
-- **AE** — stands for **Arab Engineers** / **Advanced Engineering** (your team identity, publishable under `com.ae.*`)
-- **Dev** — short for **Developer** — this is purely a dev tool, invisible to end users
-- **Lens** — a lens lets you **see clearly through something**. AEDevLens lets you see through your app at runtime: logs, network calls, analytics events, performance — all in one focused view
+| Feature | Description |
+|---------|-------------|
+| 🔍 **Log Inspector** | Search, filter, and copy logs with syntax-highlighted JSON |
+| 🌐 **Network Viewer** | HTTP request/response inspection with method badges |
+| 📊 **Analytics Tracker** | Monitor analytics events in real-time |
+| 🎨 **Beautiful UI** | Material3 design with light/dark mode support |
+| 🧩 **Plugin System** | Extend with custom debug panels |
+| 📱 **Adaptive Layout** | Bottom sheet on phones, dialog on tablets |
+| 🔌 **Zero Release Overhead**| Disable with a single flag — no runtime cost |
+| 🍎 **Multiplatform** | Android, iOS, Desktop (JVM) |
 
-Together: **"A developer's lens into your running app"**
+## 📦 Installation
 
-It follows the same metaphor as:
-- [Flipper](https://fbflipper.com/) — Facebook's extensible dev tool
-- [Telescope](https://github.com/mxmCherry/telescope) — look through your app
-- [Lens](https://k8slens.dev/) — visibility into complex systems
-
-It's short, technical, memorable, and reflects exactly what the tool does.
-
----
-
-## Features
-
-- 🔌 **Plugin Architecture** — Extensible with custom built-in or external plugins
-- 📋 **Built-in Log Viewer** — Search, filter, copy, and inspect logs in real-time
-- 📱 **Adaptive UI** — Bottom sheet on phones, dialog on tablets
-- 🎯 **Zero Release Overhead** — `enabled = BuildConfig.DEBUG` disables everything
-- 🌍 **Multiplatform** — Android + iOS support
-- 🔒 **Plugin Isolation** — One plugin crash never affects other plugins
-- ⚡ **High Performance** — SharedFlow + batching, no UI jank on fast log producers
-- 🎨 **Themeable** — Full Material3 dark/light theme, customizable colors
-
----
-
-## Quick Start (3 Steps)
-
-### 1. Add dependency
+### Kotlin Multiplatform
 
 ```kotlin
-// settings.gradle.kts
-include(":aeinspector")   // or publish to GitHub Packages
-
-// composeApp/build.gradle.kts
-implementation(project(":aeinspector"))
+// build.gradle.kts (shared module)
+kotlin {
+    sourceSets {
+        commonMain.dependencies {
+            implementation("io.github.abdo-essam:devlens:1.0.0")
+        }
+    }
+}
 ```
 
-### 2. Wrap your app
+### Android Only
+
+```kotlin
+// build.gradle.kts (app module)
+dependencies {
+    debugImplementation("io.github.abdo-essam:devlens-android:1.0.0")
+}
+```
+
+### Version Catalog
+
+```toml
+[versions]
+devlens = "1.0.0"
+
+[libraries]
+devlens = { module = "io.github.abdo-essam:devlens", version.ref = "devlens" }
+```
+
+## 🚀 Quick Start
+
+### 1. Wrap Your App
 
 ```kotlin
 @Composable
 fun App() {
     AEDevLensProvider(
-        enabled = BuildConfig.DEBUG  // Zero overhead in release
+        enabled = BuildConfig.DEBUG  // ← zero overhead in release
     ) {
         MaterialTheme {
-            MainNavigation()
+            YourAppContent()
         }
     }
 }
 ```
 
-### 3. That's it — tap the 🐛 button to open the inspector
-
----
-
-## Custom Logging
-
-You can log directly to AEDevLens from anywhere:
+### 2. Log Messages
 
 ```kotlin
+val inspector = AEDevLens.default
+
 // Simple logging
-AEDevLens.default.log(LogLevel.DEBUG, "CartFlow", "Item added: $itemId")
-AEDevLens.default.log(LogLevel.ERROR, "Auth", "Token expired: ${error.message}")
-AEDevLens.default.log(LogLevel.INFO, "Payment", "Transaction: ${"{"}"amount": 100, "currency": "EGP"{"}"}")
+inspector.log(LogLevel.INFO, "HomeScreen", "User opened home screen")
+inspector.log(LogLevel.ERROR, "API", "Failed to fetch user: 401 Unauthorized")
+
+// Network logging (auto-detected)
+inspector.log(LogLevel.DEBUG, "HTTP", "--> GET https://api.example.com/users")
+inspector.log(LogLevel.DEBUG, "HTTP", "<-- 200 OK https://api.example.com/users")
+
+// Analytics events
+inspector.log(LogLevel.INFO, "Analytics", "screen_view: HomeScreen")
 ```
 
-JSON bodies in log messages are automatically detected and **pretty-printed** in the inspector.
+### 3. Open DevLens
 
-### Bridge with Kermit (optional)
+Three ways to open the inspector:
+1. Tap the floating bug button (bottom-right corner)
+2. Long-press anywhere on screen
+3. Programmatically: `LocalAEDevLensController.current.show()`
 
-If your app already uses Kermit, route all its logs automatically:
+## 🔧 Configuration
 
 ```kotlin
-import co.touchlab.kermit.Logger
-
-Logger.setLogWriters(
-    AEDevLensLogWriter(),   // All Kermit logs → AEDevLens
-    platformLogWriter()      // Also go to Logcat / console
+val inspector = AEDevLens.create(
+    AEDevLensConfig(
+        maxLogEntries = 1000,            // Default: 500
+        showFloatingButton = true,        // Default: true
+        floatingButtonAlignment = Alignment.BottomEnd,
+        enableLongPress = true,           // Default: true
+        colorScheme = yourCustomScheme,   // Default: built-in theme
+    )
 )
-```
 
-> **Why is Kermit not internal?** AEDevLens does NOT force Kermit on you. Every app is different — some use Timber, some use custom log systems, some use `println`. The bridge is optional. If you use Kermit, add it in one line. If not, log directly via `AEDevLens.default.log()`.
-
----
-
-## What Are Plugins?
-
-AEDevLens is built on a **plugin architecture** — every feature is a self-contained, isolated module that you can install, remove, or replace.
-
-Think of it exactly like browser extensions — you pick what you need.
-
-```
-AEDevLens Core (the browser)
-    ├── LogsPlugin       → installed by default ✅
-    ├── NetworkPlugin    → install if you use Ktor/OkHttp 🔌
-    ├── DatabasePlugin   → install if you use SQLDelight/Room 🔌
-    ├── PrefsPlugin      → install if you use DataStore/SharedPrefs 🔌
-    └── CrashPlugin      → install for crash persistence 🔌 (coming)
-```
-
-### Plugin types:
-
-| Type | When to use |
-|------|------------|
-| `UIPlugin` | Has a visible tab in the inspector (logs, network, etc.) |
-| `DataPlugin` | Headless — collects data silently, no visible tab (crash recorder, perf sampler) |
-
-### Installing plugins:
-
-```kotlin
-val devLens = AEDevLens.create()
-
-// Only install what you need
-devLens.install(LogsPlugin())          // Always useful
-devLens.install(NetworkPlugin())       // HTTP inspector (if your app has network)
-devLens.install(PrefInspectorPlugin()) // SharedPrefs viewer (if your app uses prefs)
-```
-
-### Apps with no network:
-
-If your app has **no network** (offline tools, calculators, games), simply **don't install NetworkPlugin**. There is **zero network overhead** in the core library. The `LogsPlugin` works completely standalone:
-
-```kotlin
-// Minimal setup — no network, no prefs, just logs
-AEDevLens.create().apply {
-    // LogsPlugin is installed automatically — nothing else needed
+AEDevLensProvider(inspector = inspector) {
+    YourApp()
 }
 ```
 
----
+## 🧩 Plugins
 
-## Making a Custom Plugin
+### Built-in Plugins
+| Plugin | Type | Description |
+|--------|------|-------------|
+| LogsPlugin | UI | Log viewer with search, filter, copy |
 
-### Custom UI Plugin (visible tab):
+### Coming Soon
+| Plugin | Type | Description |
+|--------|------|-------------|
+| NetworkPlugin | UI | Ktor/OkHttp request inspector |
+| PreferencesPlugin | UI | SharedPreferences / DataStore viewer |
+| CrashPlugin | Data | Crash reporting and history |
+
+## 🔨 Custom Plugins
+
+Create your own debug panel in 3 steps:
 
 ```kotlin
-class PreferencesPlugin(
-    private val dataStore: DataStore<Preferences>
-) : UIPlugin {
-    override val id = "prefs"
-    override val name = "Prefs"
-    override val icon = Icons.Default.Settings
+class FeatureFlagsPlugin : UIPlugin {
+    override val id = "feature_flags"
+    override val name = "Flags"
+    override val icon = Icons.Default.Flag
 
-    private val _entries = MutableStateFlow<Map<String, Any>>(emptyMap())
-    override val badgeCount: StateFlow<Int?> = _entries
-        .map { it.size }
-        .stateIn(CoroutineScope(Dispatchers.Default), SharingStarted.Eagerly, null)
+    private val _badgeCount = MutableStateFlow<Int?>(null)
+    override val badgeCount: StateFlow<Int?> = _badgeCount
 
     override fun onAttach(inspector: AEDevLens) {
-        // Start observing DataStore
+        // Initialize your plugin
     }
 
     @Composable
     override fun Content(modifier: Modifier) {
-        val entries by _entries.collectAsState()
-        LazyColumn(modifier) {
-            items(entries.entries.toList()) { (key, value) ->
-                ListItem(
-                    headlineContent = { Text(key) },
-                    supportingContent = { Text(value.toString()) }
-                )
+        // Your Compose UI here
+        LazyColumn(modifier = modifier) {
+            items(flags) { flag ->
+                FlagRow(flag)
             }
         }
     }
+}
 
-    override fun onClear() { _entries.value = emptyMap() }
+// Install it
+val inspector = AEDevLens.default
+inspector.install(FeatureFlagsPlugin())
+```
+
+📖 See the [Custom Plugins Guide](https://abdo-essam.github.io/AEDevLens/custom-plugins) for the full API reference.
+
+## 🔗 Kermit Integration
+
+Bridge your existing Kermit logs into AEDevLens:
+
+```kotlin
+// In your DI / initialization
+val inspector = AEDevLens.default
+
+Logger.addLogWriter(AEDevLensLogWriter(inspector))
+```
+
+```kotlin
+class AEDevLensLogWriter(
+    private val inspector: AEDevLens
+) : LogWriter() {
+    override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
+        inspector.log(
+            level = severity.toDevLensLevel(),
+            tag = tag,
+            message = buildString {
+                append(message)
+                throwable?.let { append("\n${it.stackTraceToString()}") }
+            }
+        )
+    }
 }
 ```
 
-### Custom Data Plugin (headless, no UI tab):
+## 🏗️ Architecture
 
-```kotlin
-class PerformanceSamplerPlugin : DataPlugin {
-    override val id = "perf_sampler"
-    override val name = "Performance"
-
-    private val samples = mutableListOf<FrameData>()
-
-    override fun onOpen() {
-        // Start collecting frame data when inspector opens
-        startSampling()
-    }
-
-    override fun onClose() {
-        // Stop heavy sampling when inspector is closed
-        stopSampling()
-    }
-
-    override fun onClear() { samples.clear() }
-}
+```text
+┌─────────────────────────────────────────────────┐
+│              AEDevLensProvider                   │  Compose wrapper
+│  ┌───────────────────────────────────────────┐  │
+│  │            AEDevLens (Core)               │  │  Plugin engine
+│  │  ┌─────────┐ ┌─────────┐ ┌────────────┐  │  │
+│  │  │  Logs   │ │ Network │ │  Custom    │  │  │  Plugins
+│  │  │ Plugin  │ │ Plugin  │ │  Plugin    │  │  │
+│  │  └────┬────┘ └────┬────┘ └─────┬──────┘  │  │
+│  │       │           │            │          │  │
+│  │  ┌────┴────┐ ┌────┴────┐ ┌────┴──────┐  │  │
+│  │  │LogStore │ │NetStore │ │ YourStore │  │  │  Data layer
+│  │  └─────────┘ └─────────┘ └───────────┘  │  │
+│  └───────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────┘
 ```
 
-### Registering your custom plugin:
+## 📋 Requirements
 
-```kotlin
-AEDevLens.default.install(PreferencesPlugin(myDataStore))
-AEDevLens.default.install(PerformanceSamplerPlugin())
+| Platform | Minimum Version |
+|----------|----------------|
+| Android | API 24 (Android 7.0) |
+| iOS | 15.0 |
+| Kotlin | 2.3.0 |
+| Compose Multiplatform | 1.9.3 |
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read the [Contributing Guide](CONTRIBUTING.md) first.
+
+```bash
+git clone https://github.com/abdo-essam/AEDevLens.git
+cd AEDevLens
+./gradlew build
+./gradlew allTests
 ```
 
----
+## 📄 License
 
-## Plugin Lifecycle
+```text
+Copyright 2025 Abdo Essam
 
-```
-install() → onAttach(inspectorInstance)
-                ↓
-           [Inspector opens] → onOpen()
-                ↓
-           [Inspector closes] → onClose()
-                ↓
-           [Repeat open/close as user uses it]
-                ↓
-           uninstall() → onDetach()
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
 ```
 
-| Method | When | Typical Use |
-|--------|------|-------------|
-| `onAttach` | Plugin registered | Init coroutines, open DB connections |
-| `onOpen` | Inspector UI appears | Start listeners, refresh data |
-| `onClose` | Inspector UI hidden | Pause expensive sampling |
-| `onDetach` | Plugin unregistered | Close connections, cancel jobs |
-| `onClear` | User taps "Clear" | Delete collected data |
+## 💖 Acknowledgements
 
----
-
-## Architecture Decisions
-
-| Decision | Reason |
-|----------|--------|
-| **Instance-based** (`AEDevLens.create()`) instead of Singleton | Testable, no hidden globals, supports multiple isolated instances |
-| **Plugin isolation** via try-catch boundaries | One crashing plugin never kills the inspector |
-| **Kermit is optional** (`api`, not embedded) | Don't force Kermit on apps using other log systems |
-| **Adaptive UI** (Sheet vs Dialog) | Bottom sheet on phones, dialog on tablets — proper UX |
-| **SharedFlow + batching** per `LogStore` | Prevents UI jank when 100 logs/sec are produced |
-| **`enabled = false`** → zero overhead | Safe to leave in code for release builds |
-
----
-
-## Best Practices
-
-| ✅ Do | ❌ Don't |
-|-------|---------|
-| `enabled = BuildConfig.DEBUG` | Ship inspector to production |
-| Use `debugImplementation` | Log sensitive data (tokens, PII, passwords) |
-| Keep plugins small and focused | Create monolithic plugins |
-| Use `DataPlugin` for headless tasks | Force Compose on non-UI plugins |
-| Install only plugins you need | Install everything "just in case" |
-
----
-
-## Roadmap
-
-- [ ] `NetworkPlugin` — Ktor/OkHttp HTTP inspector
-- [ ] `DatabasePlugin` — SQLDelight table browser
-- [ ] `PrefsPlugin` — DataStore / SharedPreferences viewer
-- [ ] `CrashPlugin` — Crash persistence across restarts
-- [ ] `PerformancePlugin` — FPS / memory sampler
-- [ ] Shake-to-open (configurable gesture)
-- [ ] GitHub Packages publishing CI/CD
-
----
-
-## License
-
-MIT License — see [LICENSE](LICENSE) for details.
+- Jetpack Compose — UI toolkit
+- Kotlin Multiplatform — Cross-platform
+- Flipper — Inspiration for the plugin architecture
+- Chucker — Inspiration for network inspection
