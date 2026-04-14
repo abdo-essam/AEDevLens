@@ -9,7 +9,7 @@ public final class com/ae/devlens/AEDevLens {
 	public final fun getPlugins ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getUiPlugins ()Ljava/util/List;
 	public final fun install (Lcom/ae/devlens/core/DevLensPlugin;)V
-	public final fun log (Lcom/ae/devlens/plugins/logs/model/LogLevel;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun log (Lcom/ae/devlens/plugins/logs/model/LogSeverity;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun uninstall (Ljava/lang/String;)V
 }
 
@@ -136,15 +136,15 @@ public final class com/ae/devlens/plugins/logs/model/LogEntry {
 	public static final field $stable I
 	public static final field ANALYTICS_TAG Ljava/lang/String;
 	public static final field Companion Lcom/ae/devlens/plugins/logs/model/LogEntry$Companion;
-	public fun <init> (Ljava/lang/String;Lcom/ae/devlens/plugins/logs/model/LogLevel;Ljava/lang/String;Ljava/lang/String;J)V
-	public synthetic fun <init> (Ljava/lang/String;Lcom/ae/devlens/plugins/logs/model/LogLevel;Ljava/lang/String;Ljava/lang/String;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Lcom/ae/devlens/plugins/logs/model/LogSeverity;Ljava/lang/String;Ljava/lang/String;J)V
+	public synthetic fun <init> (Ljava/lang/String;Lcom/ae/devlens/plugins/logs/model/LogSeverity;Ljava/lang/String;Ljava/lang/String;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Lcom/ae/devlens/plugins/logs/model/LogLevel;
+	public final fun component2 ()Lcom/ae/devlens/plugins/logs/model/LogSeverity;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()J
-	public final fun copy (Ljava/lang/String;Lcom/ae/devlens/plugins/logs/model/LogLevel;Ljava/lang/String;Ljava/lang/String;J)Lcom/ae/devlens/plugins/logs/model/LogEntry;
-	public static synthetic fun copy$default (Lcom/ae/devlens/plugins/logs/model/LogEntry;Ljava/lang/String;Lcom/ae/devlens/plugins/logs/model/LogLevel;Ljava/lang/String;Ljava/lang/String;JILjava/lang/Object;)Lcom/ae/devlens/plugins/logs/model/LogEntry;
+	public final fun copy (Ljava/lang/String;Lcom/ae/devlens/plugins/logs/model/LogSeverity;Ljava/lang/String;Ljava/lang/String;J)Lcom/ae/devlens/plugins/logs/model/LogEntry;
+	public static synthetic fun copy$default (Lcom/ae/devlens/plugins/logs/model/LogEntry;Ljava/lang/String;Lcom/ae/devlens/plugins/logs/model/LogSeverity;Ljava/lang/String;Ljava/lang/String;JILjava/lang/Object;)Lcom/ae/devlens/plugins/logs/model/LogEntry;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCleanMessage ()Ljava/lang/String;
 	public final fun getDisplayTag ()Ljava/lang/String;
@@ -153,8 +153,8 @@ public final class com/ae/devlens/plugins/logs/model/LogEntry {
 	public final fun getHttpStatusCode ()Ljava/lang/Integer;
 	public final fun getId ()Ljava/lang/String;
 	public final fun getJsonBody ()Ljava/lang/String;
-	public final fun getLevel ()Lcom/ae/devlens/plugins/logs/model/LogLevel;
 	public final fun getMessage ()Ljava/lang/String;
+	public final fun getSeverity ()Lcom/ae/devlens/plugins/logs/model/LogSeverity;
 	public final fun getTag ()Ljava/lang/String;
 	public final fun getTimestamp ()J
 	public final fun getUrl ()Ljava/lang/String;
@@ -180,17 +180,17 @@ public final class com/ae/devlens/plugins/logs/model/LogFilter : java/lang/Enum 
 	public static fun values ()[Lcom/ae/devlens/plugins/logs/model/LogFilter;
 }
 
-public final class com/ae/devlens/plugins/logs/model/LogLevel : java/lang/Enum {
-	public static final field ASSERT Lcom/ae/devlens/plugins/logs/model/LogLevel;
-	public static final field DEBUG Lcom/ae/devlens/plugins/logs/model/LogLevel;
-	public static final field ERROR Lcom/ae/devlens/plugins/logs/model/LogLevel;
-	public static final field INFO Lcom/ae/devlens/plugins/logs/model/LogLevel;
-	public static final field VERBOSE Lcom/ae/devlens/plugins/logs/model/LogLevel;
-	public static final field WARN Lcom/ae/devlens/plugins/logs/model/LogLevel;
+public final class com/ae/devlens/plugins/logs/model/LogSeverity : java/lang/Enum {
+	public static final field ASSERT Lcom/ae/devlens/plugins/logs/model/LogSeverity;
+	public static final field DEBUG Lcom/ae/devlens/plugins/logs/model/LogSeverity;
+	public static final field ERROR Lcom/ae/devlens/plugins/logs/model/LogSeverity;
+	public static final field INFO Lcom/ae/devlens/plugins/logs/model/LogSeverity;
+	public static final field VERBOSE Lcom/ae/devlens/plugins/logs/model/LogSeverity;
+	public static final field WARN Lcom/ae/devlens/plugins/logs/model/LogSeverity;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getLabel ()Ljava/lang/String;
-	public static fun valueOf (Ljava/lang/String;)Lcom/ae/devlens/plugins/logs/model/LogLevel;
-	public static fun values ()[Lcom/ae/devlens/plugins/logs/model/LogLevel;
+	public static fun valueOf (Ljava/lang/String;)Lcom/ae/devlens/plugins/logs/model/LogSeverity;
+	public static fun values ()[Lcom/ae/devlens/plugins/logs/model/LogSeverity;
 }
 
 public final class com/ae/devlens/plugins/logs/store/LogStore {
@@ -203,7 +203,7 @@ public final class com/ae/devlens/plugins/logs/store/LogStore {
 	public final fun getLogsFlow ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getSearchQuery ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getSelectedFilter ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun log (Lcom/ae/devlens/plugins/logs/model/LogLevel;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun log (Lcom/ae/devlens/plugins/logs/model/LogSeverity;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun updateSearchQuery (Ljava/lang/String;)V
 	public final fun updateSelectedFilter (Lcom/ae/devlens/plugins/logs/model/LogFilter;)V
 }
