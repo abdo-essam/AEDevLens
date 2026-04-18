@@ -30,7 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AEDevLensConfig` for customization
 - `UIPlugin` and `DataPlugin` interfaces for extensions
 - KMP support: Android, iOS (arm64, x64, simulatorArm64)
-- Kermit log writer bridge (`AEDevLensLogWriter`)
 - JSON syntax highlighting in log details
 - HTTP method/status badge coloring
 - Copy single log / copy all logs to clipboard
