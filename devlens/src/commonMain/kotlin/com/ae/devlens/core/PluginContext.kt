@@ -27,10 +27,10 @@ public interface PluginContext {
      * Launched from this scope are automatically cancelled when the plugin is detached.
      * Uses [kotlinx.coroutines.SupervisorJob] so one failing child doesn't cancel others.
      */
-    val scope: CoroutineScope
+    public val scope: CoroutineScope
 
     /** Global DevLens configuration for this instance. */
-    val config: DevLensConfig
+    public val config: DevLensConfig
 
     /**
      * Look up a sibling plugin by type.
@@ -39,7 +39,7 @@ public interface PluginContext {
      * val logs = context.getPlugin<LogsPlugin>()
      * ```
      */
-    fun <T : DevLensPlugin> getPlugin(type: KClass<T>): T?
+    public fun <T : DevLensPlugin> getPlugin(type: KClass<T>): T?
 }
 
 /**

@@ -157,8 +157,8 @@ public data class LogEntry(
             PRETTY_JSON.encodeToString(JsonElement.serializer(), jsonElement)
         }.getOrDefault(json)
 
-    companion object {
-        const val ANALYTICS_TAG = "Analytics"
+    public companion object {
+        public const val ANALYTICS_TAG = "Analytics"
 
         private val PRETTY_JSON =
             Json {

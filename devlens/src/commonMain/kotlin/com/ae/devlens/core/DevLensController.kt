@@ -1,5 +1,6 @@
 package com.ae.devlens.core
 
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,19 +11,19 @@ import kotlinx.coroutines.flow.asStateFlow
  *
  * Access via [LocalDevLensController] inside a [com.ae.devlens.AEDevLensProvider].
  */
-class DevLensController {
+public class DevLensController {
     private val _isVisible = MutableStateFlow(false)
-    val isVisible: StateFlow<Boolean> = _isVisible.asStateFlow()
+    public val isVisible: StateFlow<Boolean> = _isVisible.asStateFlow()
 
-    fun show() {
+    public fun show() {
         _isVisible.value = true
     }
 
-    fun hide() {
+    public fun hide() {
         _isVisible.value = false
     }
 
-    fun toggle() {
+    public fun toggle() {
         _isVisible.value = !_isVisible.value
     }
 }
@@ -32,7 +33,7 @@ class DevLensController {
  *
  * Available inside [com.ae.devlens.AEDevLensProvider].
  */
-val LocalDevLensController =
-    compositionLocalOf<DevLensController> {
+public val LocalDevLensController: ProvidableCompositionLocal<DevLensController> =
+    compositionLocalOf {
         error("DevLensController not provided. Wrap your content with AEDevLensProvider.")
     }
