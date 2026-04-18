@@ -5,12 +5,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
-    alias(libs.plugins.composeMultiplatform)
-    alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.dokka)
     alias(libs.plugins.vanniktechPublish)
-    alias(libs.plugins.kover)
     `maven-publish`
     signing
 }
@@ -19,23 +15,17 @@ group = "io.github.abdo-essam"
 version = project.findProperty("VERSION_NAME")?.toString() ?: "0.0.1-SNAPSHOT"
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(23)
     explicitApiWarning()
 
     androidLibrary {
         namespace = "com.ae.devlens"
-        compileSdk =
-            libs.versions.android.compileSdk
-                .get()
-                .toInt()
-        minSdk =
-            libs.versions.android.minSdk
-                .get()
-                .toInt()
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
 
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
@@ -54,27 +44,11 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation("org.jetbrains.compose.runtime:runtime:1.7.3")
-            implementation("org.jetbrains.compose.foundation:foundation:1.7.3")
-            implementation("org.jetbrains.compose.material3:material3:1.7.3")
-            implementation("org.jetbrains.compose.ui:ui:1.7.3")
-            implementation("org.jetbrains.compose.components:components-resources:1.7.3")
-            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
-
-            implementation(libs.kotlinx.datetime)
-            implementation(libs.ktor.serialization.kotlinx.json)
-            implementation(libs.kotlinx.coroutines.core)
+            // Re-export all modules — consumers only need this one dependency
+            api(projects.devlensCore)
+            api(projects.devlensUi)
+            api(projects.devlensLogs)
         }
-
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-            implementation(libs.kotlinx.coroutines.test)
-            implementation(libs.turbine)
-        }
-
-        androidMain.dependencies {}
-
-        iosMain.dependencies {}
     }
 }
 
@@ -89,22 +63,6 @@ dokka {
         perPackageOption {
             matchingRegex.set(".*\\.internal.*")
             suppress.set(true)
-        }
-    }
-}
-
-kover {
-    reports {
-        filters {
-            excludes {
-                classes("*.ui.*", "*.theme.*")
-            }
-        }
-        // TODO: Raise coverage threshold as tests are added (target: 70%)
-        verify {
-            rule {
-                minBound(0)
-            }
         }
     }
 }

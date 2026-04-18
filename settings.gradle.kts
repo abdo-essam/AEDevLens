@@ -27,6 +27,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "AEDevLens"
 
+include(":devlens-core")
+include(":devlens-ui")
+include(":devlens-logs")
 include(":devlens")
 include(":sample:composeApp")
 

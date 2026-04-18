@@ -14,6 +14,7 @@ repositories {
 }
 
 kotlin {
+    jvmToolchain(23)
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
@@ -24,11 +25,11 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":devlens")) // Links to AEDevLens Library
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
+            implementation(libs.runtime)
+            implementation(libs.foundation)
+            implementation(libs.material3)
+            implementation(libs.ui)
+            implementation(libs.components.resources)
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
