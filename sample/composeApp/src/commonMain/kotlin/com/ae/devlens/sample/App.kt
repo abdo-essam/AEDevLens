@@ -1,62 +1,106 @@
 package com.ae.devlens.sample
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Analytics
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material.icons.outlined.Analytics
+import androidx.compose.material.icons.outlined.List
+import androidx.compose.material.icons.outlined.WifiFind
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.ae.devlens.AEDevLens
 import com.ae.devlens.AEDevLensProvider
-import com.ae.devlens.DevLens
 import com.ae.devlens.DevLensUiConfig
+import com.ae.devlens.sample.ui.analytics.AnalyticsScreen
+import com.ae.devlens.sample.ui.logs.LogsScreen
+import com.ae.devlens.sample.ui.network.NetworkScreen
+import com.ae.devlens.sample.ui.theme.SampleTheme
+
+// ── Navigation model ──────────────────────────────────────────────────────────
+
+private data class NavTab(
+    val label: String,
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector,
+)
+
+private val TABS = listOf(
+    NavTab("Logs",      Icons.Filled.List,      Icons.Outlined.List),
+    NavTab("Network",   Icons.Filled.Wifi,      Icons.Outlined.WifiFind),
+    NavTab("Analytics", Icons.Filled.Analytics, Icons.Outlined.Analytics),
+)
+
+// ── Root composable ───────────────────────────────────────────────────────────
 
 @Composable
-fun App() {
-    // No init here — DevLensSetup.init() runs in SampleApp.onCreate()
-    // AEDevLens.default is already configured with LogsPlugin by then.
-
-    MaterialTheme {
+fun App(debugMode: Boolean = false) {
+    SampleTheme {
         AEDevLensProvider(
             inspector = AEDevLens.default,
             uiConfig = DevLensUiConfig(
                 showFloatingButton = true,
                 enableLongPress = true,
             ),
-            enabled = true,
+            enabled = debugMode,
         ) {
-            Column(
+            var selectedTab by rememberSaveable { mutableIntStateOf(0) }
+
+            Scaffold(
                 modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Text("AEDevLens Sample App")
-                Text("Open DevLens: tap the 🐛 button or long-press anywhere")
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Button(onClick = { DevLens.i("SampleApp", "Hello from the sample app!") }) {
-                    Text("Trigger Info Log")
+                bottomBar = {
+                    SampleNavBar(
+                        selectedTab = selectedTab,
+                        onTabSelected = { selectedTab = it },
+                    )
+                },
+            ) { innerPadding ->
+                when (selectedTab) {
+                    0 -> LogsScreen()
+                    1 -> NetworkScreen()
+                    2 -> AnalyticsScreen()
                 }
-
-                Button(onClick = { DevLens.e("SampleApp", "Uh oh! Something went wrong!") }) {
-                    Text("Trigger Error Log")
-                }
-
-                Button(onClick = { DevLens.d("SampleApp", "Debug message with details") }) {
-                    Text("Trigger Debug Log")
-                }
-
-                Button(onClick = { DevLens.w("SampleApp", "Watch out for this!") }) {
-                    Text("Trigger Warn Log")
-                }
+                // Apply inner padding so content isn't hidden behind nav bar
+                androidx.compose.foundation.layout.Box(
+                    modifier = Modifier.padding(innerPadding)
+                )
             }
+        }
+    }
+}
+
+// ── Bottom Navigation Bar ─────────────────────────────────────────────────────
+
+@Composable
+private fun SampleNavBar(
+    selectedTab: Int,
+    onTabSelected: (Int) -> Unit,
+) {
+    NavigationBar {
+        TABS.forEachIndexed { index, tab ->
+            NavigationBarItem(
+                selected = selectedTab == index,
+                onClick = { onTabSelected(index) },
+                icon = {
+                    Icon(
+                        imageVector = if (selectedTab == index) tab.selectedIcon else tab.unselectedIcon,
+                        contentDescription = tab.label,
+                    )
+                },
+                label = { Text(tab.label) },
+            )
         }
     }
 }

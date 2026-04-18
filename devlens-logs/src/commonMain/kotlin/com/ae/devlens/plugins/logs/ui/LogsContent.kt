@@ -42,7 +42,7 @@ internal fun LogsContent(
         LogViewerHeader(
             logCount = displayLogs.size,
             totalCount = allLogs.size,
-            onClearAll = { viewModel.updateSearchQuery("") },
+            onClearAll = { viewModel.clearLogs() },
             onCopyAll = {
                 val text = LogUtils.formatAllLogsForCopy(displayLogs)
                 clipboardManager.setText(AnnotatedString(text))

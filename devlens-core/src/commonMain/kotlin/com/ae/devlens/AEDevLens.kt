@@ -41,7 +41,7 @@ import kotlinx.coroutines.flow.StateFlow
  * ```
  */
 public class AEDevLens private constructor(
-    public val config: DevLensConfig,
+    config: DevLensConfig,
 ) {
 
     // ── Sub-systems ───────────────────────────────────────────────────────────
@@ -111,7 +111,7 @@ public class AEDevLens private constructor(
      * Notify all plugins the host app has moved to the **foreground**.
      * Publishes [AppStartedEvent] to [eventBus].
      */
-    public fun notifyStart(): Unit {
+    public fun notifyStart() {
         pluginManager.forEach { it.onStart() }
         eventBus.publish(AppStartedEvent)
     }
@@ -120,7 +120,7 @@ public class AEDevLens private constructor(
      * Notify all plugins the host app has moved to the **background**.
      * Publishes [AppStoppedEvent] to [eventBus].
      */
-    public fun notifyStop(): Unit {
+    public fun notifyStop() {
         pluginManager.forEach { it.onStop() }
         eventBus.publish(AppStoppedEvent)
     }
@@ -129,7 +129,7 @@ public class AEDevLens private constructor(
      * Notify all plugins the DevLens UI panel has been **opened**.
      * Publishes [PanelOpenedEvent] to [eventBus].
      */
-    public fun notifyOpen(): Unit {
+    public fun notifyOpen() {
         pluginManager.forEach { it.onOpen() }
         eventBus.publish(PanelOpenedEvent)
     }
@@ -138,13 +138,13 @@ public class AEDevLens private constructor(
      * Notify all plugins the DevLens UI panel has been **closed**.
      * Publishes [PanelClosedEvent] to [eventBus].
      */
-    public fun notifyClose(): Unit {
+    public fun notifyClose() {
         pluginManager.forEach { it.onClose() }
         eventBus.publish(PanelClosedEvent)
     }
 
     /** Clear all plugin data and publish [AllDataClearedEvent]. */
-    public fun clearAll(): Unit {
+    public fun clearAll() {
         pluginManager.forEach { it.onClear() }
         eventBus.publish(AllDataClearedEvent)
     }

@@ -30,6 +30,8 @@ rootProject.name = "AEDevLens"
 include(":devlens-core")
 include(":devlens-ui")
 include(":devlens-logs")
+include(":devlens-network")
+include(":devlens-analytics")
 include(":devlens")
 include(":sample:composeApp")
 

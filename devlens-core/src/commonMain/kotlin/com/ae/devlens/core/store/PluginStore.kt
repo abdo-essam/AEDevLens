@@ -60,6 +60,20 @@ public class PluginStore<T>(capacity: Int) {
         }
     }
 
+    /**
+     * Replace the item at [index] with [item] and emit the updated list.
+     * No-op if [index] is out of bounds.
+     */
+    public fun replace(index: Int, item: T) {
+        _dataFlow.update { current ->
+            if (index !in current.indices) return@update current
+            ring.clear()
+            val updated = current.toMutableList().also { it[index] = item }
+            updated.forEach { ring.add(it) }
+            ring.toList()
+        }
+    }
+
     /** Current number of items. */
     public val count: Int get() = ring.count
 

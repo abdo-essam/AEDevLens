@@ -53,11 +53,10 @@ public fun AEDevLensProvider(
     val controller = remember { DevLensController() }
     val isVisible by controller.isVisible.collectAsState()
 
-    // Snapshot plugins once — they're installed at startup and don't change.
-    // derivedStateOf avoids recomposition unless the list identity actually changes.
-    val uiPlugins by remember(inspector) {
-        derivedStateOf { inspector.plugins.value.filterIsInstance<UIPlugin>() }
-    }
+    // Plugins are expected to be static after init, but we still use collectAsState()
+    // because StateFlow.value is NOT observable by Compose — derivedStateOf won't help here.
+    val plugins by inspector.plugins.collectAsState()
+    val uiPlugins = remember(plugins) { plugins.filterIsInstance<UIPlugin>() }
 
     // Notify plugins of open/close lifecycle events
     LaunchedEffect(isVisible) {
@@ -84,7 +83,7 @@ public fun AEDevLensProvider(
                         onClick = { controller.show() },
                         modifier = Modifier
                             .align(uiConfig.floatingButtonAlignment)
-                            .padding(end = DevLensSpacing.x5, bottom = 100.dp),
+                            .padding(end = DevLensSpacing.x5, bottom = uiConfig.floatingButtonOffset),
                     )
                 }
 
