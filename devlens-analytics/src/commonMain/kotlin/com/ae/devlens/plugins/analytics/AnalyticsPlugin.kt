@@ -53,7 +53,7 @@ public class AnalyticsPlugin : UIPlugin {
         }
 
         // Update badge count whenever events change
-        CoroutineScope(context.scope.coroutineContext).launch {
+        context.scope.launch {
             store.events.collect { events ->
                 _badgeCount.value = events.size.takeIf { it > 0 }
             }
