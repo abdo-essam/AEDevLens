@@ -30,7 +30,6 @@ import androidx.compose.material.icons.filled.ContentCopy
 internal fun LogsContent(
     viewModel: LogsViewModel,
     modifier: Modifier = Modifier,
-    onCloseInspector: () -> Unit = {},
 ) {
     val allLogs by viewModel.filteredLogs.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()

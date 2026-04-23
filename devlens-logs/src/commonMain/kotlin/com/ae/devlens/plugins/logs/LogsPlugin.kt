@@ -51,7 +51,6 @@ public class LogsPlugin(
     override val badgeCount: StateFlow<Int?> = _badgeCount
 
     private var viewModel: LogsViewModel? = null
-    private var onCloseCallback: (() -> Unit)? = null
 
     /**
      * Starts observing the log store to keep [badgeCount] in sync.
@@ -83,11 +82,6 @@ public class LogsPlugin(
         // context.scope is cancelled by AEDevLens before this call —
         // all coroutines are stopped. Only clean up non-coroutine state here.
         viewModel = null
-        onCloseCallback = null
-    }
-
-    internal fun setOnCloseCallback(callback: () -> Unit) {
-        onCloseCallback = callback
     }
 
     @Composable
@@ -96,7 +90,6 @@ public class LogsPlugin(
         LogsContent(
             viewModel = vm,
             modifier = modifier,
-            onCloseInspector = { onCloseCallback?.invoke() },
         )
     }
 
