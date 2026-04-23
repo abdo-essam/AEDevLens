@@ -81,6 +81,26 @@ public class PluginStore<T>(
         }
     }
 
+    /**
+     * Atomically find an item using [predicate] and replace it with the result of [transform].
+     * No-op if no item matches the predicate.
+     */
+    public fun updateFirst(
+        predicate: (T) -> Boolean,
+        transform: (T) -> T,
+    ) {
+        synchronized(this) {
+            val current = _dataFlow.value
+            val index = current.indexOfFirst(predicate)
+            if (index == -1) return
+            
+            ring.clear()
+            val updated = current.toMutableList().also { it[index] = transform(it[index]) }
+            updated.forEach { ring.add(it) }
+            _dataFlow.value = ring.toList()
+        }
+    }
+
     /** Current number of items. */
     public val count: Int get() = synchronized(this) { ring.count }
 

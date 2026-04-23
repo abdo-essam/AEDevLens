@@ -53,15 +53,14 @@ public class NetworkApi internal constructor(
         headers: Map<String, String> = emptyMap(),
         durationMs: Long? = null,
     ) {
-        val existing = store.entries.value.find { it.id == id } ?: return
-        store.record(
+        store.update(id) { existing ->
             existing.copy(
                 statusCode = statusCode,
                 responseBody = body,
                 responseHeaders = headers,
                 durationMs = durationMs,
-            ),
-        )
+            )
+        }
     }
 
     /** Record a failed request (connection error, timeout, etc.). */
@@ -69,8 +68,9 @@ public class NetworkApi internal constructor(
         id: String,
         message: String,
     ) {
-        val existing = store.entries.value.find { it.id == id } ?: return
-        store.record(existing.copy(error = message))
+        store.update(id) { existing ->
+            existing.copy(error = message)
+        }
     }
 
     /** Record a complete request + response entry in one call. */
