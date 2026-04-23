@@ -1,6 +1,9 @@
 package com.ae.devlens.plugins.network.model
 
+import androidx.compose.runtime.Immutable
+
 /** A single intercepted HTTP request/response pair. */
+@Immutable
 public data class NetworkEntry(
     /** Unique ID — use the same ID for request → response updates. */
     val id: String,

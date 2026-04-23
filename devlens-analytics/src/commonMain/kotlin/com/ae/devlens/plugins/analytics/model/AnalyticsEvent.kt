@@ -1,6 +1,9 @@
 package com.ae.devlens.plugins.analytics.model
 
+import androidx.compose.runtime.Immutable
+
 /** A single analytics event with arbitrary string properties. */
+@Immutable
 public data class AnalyticsEvent(
     /** Unique ID for stable list keys. */
     val id: String,
