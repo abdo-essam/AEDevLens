@@ -19,7 +19,7 @@ binary-compatibility = "0.17.0"
 turbine = "1.2.1"
 kover = "0.9.8"
 ui = "1.10.3"
-vanniktechPublish = "0.30.0"
+vanniktechPublish = "0.36.0"
 
 [libraries]
 components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "componentsResources" }
